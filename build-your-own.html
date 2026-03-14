@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Your Own Bundle — BNDL</title>
+  <meta name="description" content="Can't find the perfect bundle? Tell us what you need and we'll create a custom quote.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .build-content { max-width: 640px; margin: 0 auto; }
+    .build-success {
+      text-align: center; padding: var(--space-16); background: var(--bg-alt);
+      border-radius: var(--radius-xl); border: 1px solid var(--border);
+    }
+    .build-success__icon { font-size: 48px; margin-bottom: var(--space-6); }
+  </style>
+</head>
+<body>
+<div class="preloader" id="preloader"><div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div></div>
+
+<section class="page-header page-transition">
+  <div class="container">
+    <h1 class="page-header__title" data-i18n="buildOwn.title">Build Your Own Bundle</h1>
+    <p class="page-header__subtitle" data-i18n="buildOwn.subtitle">Can't find the perfect bundle? Tell us what you need.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="build-content">
+      <p class="reveal" style="color:var(--text-secondary);margin-bottom:var(--space-10);line-height:var(--line-height-relaxed);text-align:center" data-i18n="buildOwn.desc">Fill out the form below and we'll get back to you within 24 hours with a custom quote.</p>
+      <form id="buildForm" class="reveal" onsubmit="event.preventDefault(); document.getElementById('buildForm').style.display='none'; document.getElementById('buildSuccess').style.display='block';">
+        <div class="form-group">
+          <input type="text" class="form-group__input" placeholder=" " required>
+          <label class="form-group__label" data-i18n="buildOwn.name">Your Name</label>
+        </div>
+        <div class="form-group">
+          <input type="email" class="form-group__input" placeholder=" " required>
+          <label class="form-group__label" data-i18n="buildOwn.email">Email Address</label>
+        </div>
+        <div class="form-group">
+          <input type="tel" class="form-group__input" placeholder=" " required>
+          <label class="form-group__label" data-i18n="buildOwn.phone">Phone Number</label>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-group__input" placeholder=" ">
+          <label class="form-group__label" data-i18n="buildOwn.company">Company Name</label>
+        </div>
+        <div class="form-group">
+          <textarea class="form-group__input" placeholder=" " rows="4" required></textarea>
+          <label class="form-group__label" data-i18n="buildOwn.description">Describe what you need</label>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-group__input" placeholder=" ">
+          <label class="form-group__label" data-i18n="buildOwn.quantity">Estimated Quantity</label>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-group__input" placeholder=" ">
+          <label class="form-group__label" data-i18n="buildOwn.budget">Budget Range</label>
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg" style="width:100%" data-i18n="buildOwn.submit">Submit Inquiry</button>
+      </form>
+      <div id="buildSuccess" style="display:none" class="build-success page-transition">
+        <div class="build-success__icon">✓</div>
+        <h2 class="section__title" data-i18n="buildOwn.success">Inquiry sent! We'll get back to you within 24 hours.</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

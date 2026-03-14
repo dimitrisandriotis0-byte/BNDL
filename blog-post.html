@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Post — BNDL</title>
+  <meta name="description" content="Read our latest blog post about branded merchandise.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .blog-post { padding-top: var(--space-32); max-width: 760px; margin: 0 auto; }
+    .blog-post__back { font-size: var(--font-sm); color: var(--text-muted); margin-bottom: var(--space-6); display: inline-block; }
+    .blog-post__back:hover { color: var(--text); }
+    .blog-post__meta { font-size: var(--font-sm); color: var(--text-muted); margin-bottom: var(--space-8); display: flex; gap: var(--space-3); align-items: center; }
+    .blog-post__title { font-size: var(--font-4xl); font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing-tight); line-height: var(--line-height-tight); margin-bottom: var(--space-6); }
+    .blog-post__hero { width: 100%; border-radius: var(--radius-lg); aspect-ratio: 16/9; object-fit: cover; margin-bottom: var(--space-10); }
+    .blog-post__content { font-size: var(--font-lg); line-height: var(--line-height-relaxed); color: var(--text-secondary); }
+    .blog-post__content p { margin-bottom: var(--space-6); }
+    .blog-post__reading-bar {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999;
+      width: 0%; transition: width 0.1s linear;
+    }
+    .blog-post__share { margin-top: var(--space-12); padding-top: var(--space-8); border-top: 1px solid var(--border); text-align: center; }
+    .blog-post__share-label { font-size: var(--font-sm); color: var(--text-muted); margin-bottom: var(--space-4); }
+  </style>
+</head>
+<body>
+<div class="preloader" id="preloader"><div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div></div>
+<div class="blog-post__reading-bar" id="readingBar"></div>
+
+<section class="section page-transition">
+  <div class="container">
+    <article class="blog-post" id="blogPostContent">
+      <!-- Populated by JS -->
+    </article>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+  const post = BLOG_POSTS.find(p => p.slug === slug);
+  const container = document.getElementById('blogPostContent');
+  const t = TRANSLATIONS[Language.current];
+
+  if (!post) {
+    container.innerHTML = '<div class="text-center" style="padding:var(--space-20) 0"><h2>Post not found</h2><a href="blog.html" class="btn btn--primary" style="margin-top:var(--space-8)">Back to Blog</a></div>';
+    return;
+  }
+
+  const title = Language.current === 'gr' ? post.titleGr : post.title;
+  const content = Language.current === 'gr' ? post.contentGr : post.content;
+  document.title = `${title} — BNDL Blog`;
+
+  const contentHtml = content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+  container.innerHTML = `
+    <a href="blog.html" class="blog-post__back reveal">← Back to Blog</a>
+    <h1 class="blog-post__title reveal">${title}</h1>
+    <div class="blog-post__meta reveal">${post.date} <span>·</span> ${post.readTime} ${t.blog.minRead}</div>
+    <img src="${post.image}" alt="${title}" class="blog-post__hero blur-up reveal" loading="lazy">
+    <div class="blog-post__content reveal">${contentHtml}</div>
+    <div class="blog-post__share reveal">
+      <div class="blog-post__share-label">Share this article</div>
+      <div class="footer__social" style="justify-content:center">
+        <a href="#" class="footer__social-link" aria-label="Share on Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></a>
+        <a href="#" class="footer__social-link" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  `;
+
+  // Reading progress bar
+  const bar = document.getElementById('readingBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  }, { passive: true });
+
+  setTimeout(() => {
+    Animations.initScrollReveal();
+    Animations.initBlurUpImages();
+  }, 100);
+});
+</script>
+</body>
+</html>

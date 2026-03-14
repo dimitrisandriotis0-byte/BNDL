@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — BNDL</title>
+  <meta name="description" content="Complete your BNDL order. Secure checkout.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .checkout-page { padding-top: var(--space-32); }
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+    @media (min-width: 768px) {
+      .checkout-layout { grid-template-columns: 1fr 380px; }
+    }
+    .checkout-section { margin-bottom: var(--space-10); }
+    .checkout-section__title {
+      font-size: var(--font-xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border);
+    }
+    .checkout-form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+    @media (min-width: 480px) {
+      .checkout-form-row--2 { grid-template-columns: 1fr 1fr; }
+    }
+    .checkout-summary {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      position: sticky; top: 120px;
+      height: fit-content;
+    }
+    .checkout-summary__title { font-size: var(--font-xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6); }
+    .checkout-summary__item {
+      display: flex; justify-content: space-between;
+      padding: var(--space-2) 0;
+      font-size: var(--font-sm);
+    }
+    .checkout-summary__item-name { flex: 1; color: var(--text-secondary); }
+    .checkout-summary__row {
+      display: flex; justify-content: space-between;
+      padding: var(--space-3) 0;
+      font-size: var(--font-sm);
+    }
+    .checkout-summary__row--total {
+      border-top: 2px solid var(--border); margin-top: var(--space-4);
+      padding-top: var(--space-4); font-size: var(--font-lg); font-weight: var(--font-weight-bold);
+    }
+    .checkout-success {
+      text-align: center; padding: var(--space-20) 0;
+    }
+    .checkout-success__check {
+      width: 80px; height: 80px; margin: 0 auto var(--space-6);
+      border-radius: 50%; background: var(--success);
+      display: flex; align-items: center; justify-content: center;
+      animation: scaleIn 0.5s var(--ease-spring);
+    }
+    .checkout-success__check svg { width: 40px; height: 40px; stroke: white; stroke-width: 3; fill: none;
+      stroke-dasharray: 24; stroke-dashoffset: 24; animation: drawCheck 0.6s 0.4s var(--ease-out) forwards; }
+    .payment-note {
+      background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: var(--space-4); font-size: var(--font-sm); color: var(--text-secondary); text-align: center;
+      margin-top: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div>
+</div>
+
+<section class="checkout-page section page-transition">
+  <div class="container" id="checkoutContent">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('checkoutContent');
+  const items = Cart.getItems();
+  const t = TRANSLATIONS[Language.current];
+  const totals = Cart.getTotal();
+
+  if (!items.length) {
+    container.innerHTML = `<div class="text-center" style="padding:var(--space-20) 0"><h2>${t.cart.empty}</h2><a href="bundles.html" class="btn btn--primary" style="margin-top:var(--space-8)">${t.cart.shopNow}</a></div>`;
+    return;
+  }
+
+  const itemsSummary = items.map(item => {
+    const b = BUNDLES.find(x => x.id === item.id);
+    return b ? `<div class="checkout-summary__item"><span class="checkout-summary__item-name">${Language.getBundleName(b)} × ${item.qty}</span><span>€${b.price * item.qty}</span></div>` : '';
+  }).join('');
+
+  container.innerHTML = `
+    <h1 class="section__title" style="text-align:left;margin-bottom:var(--space-10)" data-i18n="checkout.title">${t.checkout.title}</h1>
+    <div class="checkout-layout">
+      <form id="checkoutForm" onsubmit="event.preventDefault(); CheckoutPage.submit();">
+        <div class="checkout-section reveal">
+          <h2 class="checkout-section__title" data-i18n="checkout.personal">${t.checkout.personal}</h2>
+          <div class="checkout-form-row checkout-form-row--2">
+            <div class="form-group">
+              <input type="text" class="form-group__input" id="fullName" placeholder=" " required>
+              <label class="form-group__label" data-i18n="checkout.fullName">${t.checkout.fullName}</label>
+            </div>
+            <div class="form-group">
+              <input type="email" class="form-group__input" id="email" placeholder=" " required>
+              <label class="form-group__label" data-i18n="checkout.email">${t.checkout.email}</label>
+            </div>
+          </div>
+          <div class="checkout-form-row checkout-form-row--2">
+            <div class="form-group">
+              <input type="tel" class="form-group__input" id="phone" placeholder=" " required>
+              <label class="form-group__label" data-i18n="checkout.phone">${t.checkout.phone}</label>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-group__input" id="company" placeholder=" ">
+              <label class="form-group__label" data-i18n="checkout.company">${t.checkout.company}</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-group__input" id="vatNumber" placeholder=" ">
+            <label class="form-group__label" data-i18n="checkout.vatNumber">${t.checkout.vatNumber}</label>
+          </div>
+        </div>
+
+        <div class="checkout-section reveal">
+          <h2 class="checkout-section__title" data-i18n="checkout.shippingTitle">${t.checkout.shippingTitle}</h2>
+          <div class="form-group">
+            <input type="text" class="form-group__input" id="address" placeholder=" " required>
+            <label class="form-group__label" data-i18n="checkout.address">${t.checkout.address}</label>
+          </div>
+          <div class="checkout-form-row checkout-form-row--2">
+            <div class="form-group">
+              <input type="text" class="form-group__input" id="city" placeholder=" " required>
+              <label class="form-group__label" data-i18n="checkout.city">${t.checkout.city}</label>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-group__input" id="postal" placeholder=" " required>
+              <label class="form-group__label" data-i18n="checkout.postal">${t.checkout.postal}</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-group__input" id="country" value="Greece" placeholder=" " required>
+            <label class="form-group__label" data-i18n="checkout.country">${t.checkout.country}</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--lg" style="width:100%;max-width:400px">${t.checkout.payNow}</button>
+        <div class="payment-note" data-i18n="checkout.paymentNote">${t.checkout.paymentNote}</div>
+      </form>
+
+      <div class="checkout-summary">
+        <h3 class="checkout-summary__title" data-i18n="checkout.orderSummary">${t.checkout.orderSummary}</h3>
+        ${itemsSummary}
+        <div style="margin-top:var(--space-4)">
+          <div class="checkout-summary__row"><span>${t.cart.subtotal}</span><span>€${totals.subtotal}</span></div>
+          ${totals.discount > 0 ? `<div class="checkout-summary__row" style="color:var(--success)"><span>Discount</span><span>-€${totals.discount}</span></div>` : ''}
+          <div class="checkout-summary__row"><span>${t.cart.vat}</span><span>€${totals.vat}</span></div>
+          <div class="checkout-summary__row"><span>${t.cart.shipping}</span><span style="font-size:var(--font-xs);color:var(--text-muted)">${t.cart.shippingNote}</span></div>
+          <div class="checkout-summary__row checkout-summary__row--total"><span>${t.cart.total}</span><span>€${totals.total}</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  Animations.initScrollReveal();
+});
+
+const CheckoutPage = {
+  submit() {
+    const container = document.getElementById('checkoutContent');
+    const t = TRANSLATIONS[Language.current];
+    Cart.clear();
+    container.innerHTML = `
+      <div class="checkout-success page-transition">
+        <div class="checkout-success__check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1 class="section__title" data-i18n="checkout.success">${t.checkout.success}</h1>
+        <p class="section__subtitle" style="margin-top:var(--space-4)" data-i18n="checkout.successMsg">${t.checkout.successMsg}</p>
+        <a href="index.html" class="btn btn--primary" style="margin-top:var(--space-10)">Back to Home</a>
+      </div>
+    `;
+  }
+};
+</script>
+</body>
+</html>

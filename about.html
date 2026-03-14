@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — BNDL</title>
+  <meta name="description" content="BNDL is the fastest way to start your brand. Premium branded merchandise bundles powered by Succit wholesale infrastructure.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* Hero Section */
+    .hero-section {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('images/clothing-advanced.png') center/cover no-repeat;
+      z-index: 1;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 2;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      max-width: 1200px;
+      padding: 0 var(--space-6);
+    }
+    .hero-label {
+      font-size: var(--font-sm);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: var(--space-4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-out);
+    }
+    .hero-title {
+      font-size: clamp(60px, 12vw, 120px);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+      color: white;
+      margin: 0;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1.2s var(--ease-out) 0.2s;
+    }
+    .hero-section.visible .hero-label,
+    .hero-section.visible .hero-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Statement Section */
+    .statement-section {
+      background: #0a0a0a;
+      color: white;
+      padding: var(--space-24) 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .statement-container {
+      display: grid;
+      grid-template-columns: 60% 40%;
+      align-items: center;
+      gap: var(--space-12);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+    .statement-text {
+      font-size: clamp(60px, 8vw, 80px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      opacity: 0.6;
+      transform: translateY(8px);
+      transition: all 0.5s var(--ease-out);
+    }
+    .statement-description {
+      font-size: var(--font-lg);
+      font-weight: 300;
+      line-height: 1.6;
+      color: #cccccc;
+      opacity: 0.6;
+      transform: translateY(8px);
+      transition: all 0.5s var(--ease-out) 0.2s;
+    }
+    .statement-section.visible .statement-text,
+    .statement-section.visible .statement-description {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Numbers Section */
+    .numbers-section {
+      background: white;
+      padding: var(--space-24) 0;
+    }
+    .numbers-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-8);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+    .number-item {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s var(--ease-out);
+    }
+    .number-value {
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: var(--space-3);
+      color: var(--text);
+    }
+    .number-label {
+      font-size: var(--font-sm);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+    .numbers-section.visible .number-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .numbers-section.visible .number-item:nth-child(1) { transition-delay: 0.1s; }
+    .numbers-section.visible .number-item:nth-child(2) { transition-delay: 0.2s; }
+    .numbers-section.visible .number-item:nth-child(3) { transition-delay: 0.3s; }
+    .numbers-section.visible .number-item:nth-child(4) { transition-delay: 0.4s; }
+
+    /* Mission Section */
+    .mission-section {
+      background: var(--bg-alt);
+      padding: var(--space-24) 0;
+    }
+    .mission-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: var(--space-16);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+    .mission-content {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 1s var(--ease-out);
+    }
+    .mission-title {
+      font-size: clamp(48px, 6vw, 64px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-4);
+      color: var(--text);
+    }
+    .mission-subtitle {
+      font-size: var(--font-xl);
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .mission-image {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 1s var(--ease-out) 0.2s;
+    }
+    .mission-image img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-lg);
+    }
+    .mission-section.visible .mission-content,
+    .mission-section.visible .mission-image {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Succit Section */
+    .succit-section {
+      background: #0a0a0a;
+      color: white;
+      padding: var(--space-24) 0;
+      text-align: center;
+    }
+    .succit-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s var(--ease-out);
+    }
+    .succit-pretitle {
+      font-size: var(--font-sm);
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: var(--space-3);
+      color: var(--text-secondary);
+    }
+    .succit-title {
+      font-size: clamp(48px, 8vw, 72px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-4);
+      color: white;
+    }
+    .succit-subtitle {
+      font-size: var(--font-lg);
+      font-weight: 300;
+      line-height: 1.6;
+      margin-bottom: var(--space-8);
+      color: var(--text-secondary);
+    }
+    .succit-button {
+      display: inline-block;
+      padding: var(--space-4) var(--space-8);
+      background: white;
+      color: #0a0a0a;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: var(--radius);
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+    .succit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    }
+    .succit-section.visible .succit-container {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: white;
+      padding: var(--space-24) 0;
+      text-align: center;
+    }
+    .cta-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s var(--ease-out);
+    }
+    .cta-title {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-8);
+      color: var(--text);
+    }
+    .cta-buttons {
+      display: flex;
+      gap: var(--space-4);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-primary {
+      display: inline-block;
+      padding: var(--space-4) var(--space-8);
+      background: var(--text);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: var(--radius);
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .cta-secondary {
+      display: inline-block;
+      padding: var(--space-4) var(--space-8);
+      background: transparent;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      border: 2px solid var(--text);
+      border-radius: var(--radius);
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+    .cta-secondary:hover {
+      background: var(--text);
+      color: white;
+    }
+    .cta-section.visible .cta-container {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .statement-container {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        text-align: center;
+      }
+      .statement-text {
+        font-size: clamp(40px, 8vw, 60px);
+      }
+      .numbers-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mission-container {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+      }
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="preloader" id="preloader"><div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div></div>
+
+<!-- SECTION 1 - HERO -->
+<section class="hero-section" data-section="hero">
+  <div class="hero-background"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-label">OUR STORY</div>
+    <h1 class="hero-title">WE BUILD BRANDS.</h1>
+  </div>
+</section>
+
+<!-- SECTION 2 - STATEMENT -->
+<section class="statement-section" data-section="statement">
+  <div class="statement-container">
+    <div class="statement-text">BNDL IS THE FASTEST WAY TO START YOUR BRAND.</div>
+    <div class="statement-description">
+      We started BNDL because launching a brand shouldn't require 10 different suppliers, 20 emails and 3 months of waiting. One bundle. Everything you need. Powered by Succit wholesale infrastructure.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 - NUMBERS -->
+<section class="numbers-section" data-section="numbers">
+  <div class="numbers-container">
+    <div class="number-item">
+      <div class="number-value" data-count="14" data-suffix="+">14+</div>
+      <div class="number-label">Bundle Categories</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-count="42">42</div>
+      <div class="number-label">Ready-Made Bundles</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-count="48" data-suffix="hrs">48hrs</div>
+      <div class="number-label">Average Production Start</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-count="100" data-suffix="%">100%</div>
+      <div class="number-label">Custom Branded</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 - MISSION -->
+<section class="mission-section" data-section="mission">
+  <div class="mission-container">
+    <div class="mission-content">
+      <h2 class="mission-title">OUR MISSION</h2>
+      <p class="mission-subtitle">Ο σκοπός μας είναι να βοηθήσουμε όσους περισσότερους ιδιώτες και επιχειρηματίες να εξελίξουν το branding τους — γρήγορα, εύκολα και με σταθερές τιμές. Powered by Succit.</p>
+    </div>
+    <div class="mission-image">
+      <img src="images/corporate-essentials.png" alt="Corporate Essentials Bundle" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 - SUCCIT CONNECTION -->
+<section class="succit-section" data-section="succit">
+  <div class="succit-container">
+    <div class="succit-pretitle" data-translate="about.succitPretitle">BNDL IS POWERED BY</div>
+    <h2 class="succit-title">SUCCIT</h2>
+    <p class="succit-subtitle" data-translate="about.succitDesc">Greece's leading wholesale import & customization company</p>
+    <a href="https://succit.vercel.app" target="_blank" rel="noopener" class="succit-button" data-translate="about.succitButton">Visit Succit →</a>
+  </div>
+</section>
+
+<!-- SECTION 6 - CTA -->
+<section class="cta-section" data-section="cta">
+  <div class="cta-container">
+    <h2 class="cta-title" data-translate="about.ctaTitle">Ready to build your brand?</h2>
+    <div class="cta-buttons">
+      <a href="bundles.html" class="cta-primary" data-translate="about.ctaPrimary">Shop Bundles</a>
+      <a href="book-call.html" class="cta-secondary" data-translate="about.ctaSecondary">Book a Call</a>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Language switcher for individual pages
+  function updatePageTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const translated = Language.t(key);
+      if (typeof translated === 'string') {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = translated;
+        } else {
+          el.textContent = translated;
+        }
+      }
+    });
+    
+    document.querySelectorAll('[data-translate]').forEach(el => {
+      const key = el.getAttribute('data-translate');
+      const translated = Language.t(key);
+      if (typeof translated === 'string') {
+        el.textContent = translated;
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', updatePageTranslations);
+</script>
+<script>
+  // Initialize app components
+  App.init();
+</script>
+
+<script>
+  // Premium animations and interactions
+  document.addEventListener('DOMContentLoaded', () => {
+    // Intersection Observer for section animations
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          
+          // Trigger number counting for numbers section
+          if (entry.target.dataset.section === 'numbers') {
+            animateNumbers();
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    document.querySelectorAll('[data-section]').forEach(section => {
+      sectionObserver.observe(section);
+    });
+
+    // Number counting animation
+    function animateNumbers() {
+      const numberElements = document.querySelectorAll('.number-value');
+      
+      numberElements.forEach(element => {
+        const target = parseInt(element.dataset.count);
+        const suffix = element.dataset.suffix || '';
+        const duration = 2000;
+        const startTime = performance.now();
+        
+        function updateNumber(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function
+          const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+          const current = Math.floor(target * easeOutQuart);
+          
+          element.textContent = current + suffix;
+          
+          if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+          }
+        }
+        
+        requestAnimationFrame(updateNumber);
+      });
+    }
+
+    // Parallax effect for statement text
+    let ticking = false;
+    function updateParallax() {
+      const scrolled = window.pageYOffset;
+      const statementSection = document.querySelector('.statement-section');
+      const statementText = document.querySelector('.statement-text');
+      
+      if (statementSection && statementText) {
+        const rect = statementSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          const speed = 0.5;
+          const yPos = -(scrolled * speed);
+          statementText.style.transform = `translateY(${yPos}px)`;
+        }
+      }
+      
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', requestTick);
+
+    // Hero section animation on load
+    setTimeout(() => {
+      document.querySelector('.hero-section')?.classList.add('visible');
+    }, 300);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Bundles — BNDL | Premium Branded Merchandise</title>
+  <meta name="description" content="Browse all 42 premium branded merchandise bundles across 14 categories. Fixed prices, custom branding included.">
+  <meta property="og:title" content="All Bundles — BNDL">
+  <meta property="og:description" content="Browse 42 premium branded merchandise bundles. Fixed prices, custom logo printing.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .bundles-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+    .bundles-search {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+    }
+    .bundles-search__input {
+      width: 100%;
+      padding: var(--space-3) var(--space-5) var(--space-3) var(--space-10);
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-full);
+      font-size: var(--font-sm);
+      color: var(--text);
+      transition: border-color var(--duration-fast);
+    }
+    .bundles-search__input:focus { border-color: var(--input-focus); }
+    .bundles-search__icon {
+      position: absolute;
+      left: var(--space-4);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+    .bundles-sort select {
+      padding: var(--space-2) var(--space-5);
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-full);
+      font-size: var(--font-sm);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .bundles-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    @media (min-width: 768px) {
+      .bundles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .bundles-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .bundles-empty {
+      text-align: center;
+      padding: var(--space-20) 0;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+    .filter-tabs-wrap {
+      margin-bottom: var(--space-8);
+      position: relative;
+      overflow: hidden;
+    }
+    .bundles-count {
+      font-size: var(--font-sm);
+      color: var(--text-muted);
+      margin-bottom: var(--space-6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div>
+</div>
+
+<section class="page-header page-transition">
+  <div class="container">
+    <h1 class="page-header__title" data-i18n="bundles.title">All Bundles</h1>
+    <p class="page-header__subtitle" data-i18n="bundles.subtitle">Premium branded merchandise bundles for every industry</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs-wrap">
+      <div class="filter-tabs" id="filterTabs">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="bundles-controls">
+      <div class="bundles-search">
+        <svg class="bundles-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" class="bundles-search__input" id="bundleSearch" placeholder="Search bundles..." data-i18n="bundles.search">
+      </div>
+      <div class="bundles-sort">
+        <select id="bundleSort" onchange="BundlesPage.render()">
+          <option value="popular">Most Popular</option>
+          <option value="priceLow">Price: Low → High</option>
+          <option value="priceHigh">Price: High → Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="bundles-count" id="bundlesCount"></div>
+
+    <!-- Grid -->
+    <div class="bundles-grid" id="bundlesGrid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Language switcher for individual pages
+  function updatePageTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const translated = Language.t(key);
+      if (typeof translated === 'string') {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = translated;
+        } else {
+          el.textContent = translated;
+        }
+      }
+    });
+    
+    document.querySelectorAll('[data-translate]').forEach(el => {
+      const key = el.getAttribute('data-translate');
+      const translated = Language.t(key);
+      if (typeof translated === 'string') {
+        el.textContent = translated;
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', updatePageTranslations);
+</script>
+
+<script>
+  // Initialize app components
+  App.init();
+</script>
+
+<script>
+const BundlesPage = {
+  activeCategory: 'all',
+
+  init() {
+    // Check URL params for category
+    const params = new URLSearchParams(window.location.search);
+    this.activeCategory = params.get('cat') || 'all';
+
+    this.renderTabs();
+    this.render();
+
+    // Search
+    document.getElementById('bundleSearch').addEventListener('input', () => this.render());
+  },
+
+  renderTabs() {
+    const tabs = document.getElementById('filterTabs');
+    const t = TRANSLATIONS[Language.current];
+    let html = `<button class="filter-tab ${this.activeCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="BundlesPage.setCategory('all')">${t.bundles.filterAll}</button>`;
+    CATEGORIES.forEach(cat => {
+      const name = Language.getCategoryName(cat);
+      html += `<button class="filter-tab ${this.activeCategory === cat.slug ? 'active' : ''}" data-cat="${cat.slug}" onclick="BundlesPage.setCategory('${cat.slug}')">${name}</button>`;
+    });
+    tabs.innerHTML = html;
+  },
+
+  setCategory(cat) {
+    this.activeCategory = cat;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+    this.render();
+    // Update URL without reload
+    const url = new URL(window.location);
+    if (cat === 'all') url.searchParams.delete('cat');
+    else url.searchParams.set('cat', cat);
+    history.replaceState(null, '', url);
+  },
+
+  render() {
+    const grid = document.getElementById('bundlesGrid');
+    const search = document.getElementById('bundleSearch').value.toLowerCase().trim();
+    const sort = document.getElementById('bundleSort').value;
+    const t = TRANSLATIONS[Language.current];
+
+    let bundles = [...BUNDLES];
+
+    // Filter by category
+    if (this.activeCategory !== 'all') {
+      bundles = bundles.filter(b => b.category === this.activeCategory);
+    }
+
+    // Filter by search
+    if (search) {
+      bundles = bundles.filter(b => {
+        const name = Language.getBundleName(b).toLowerCase();
+        const cat = CATEGORIES.find(c => c.id === b.category);
+        const catName = cat ? Language.getCategoryName(cat).toLowerCase() : '';
+        return name.includes(search) || catName.includes(search) || b.items.join(' ').toLowerCase().includes(search);
+      });
+    }
+
+    // Sort
+    if (sort === 'priceLow') bundles.sort((a, b) => a.price - b.price);
+    else if (sort === 'priceHigh') bundles.sort((a, b) => b.price - a.price);
+
+    // Count
+    document.getElementById('bundlesCount').textContent = `${bundles.length} bundles`;
+
+    if (!bundles.length) {
+      grid.innerHTML = '<div class="bundles-empty">No bundles found.</div>';
+      return;
+    }
+
+    grid.innerHTML = bundles.map(b => App.renderBundleCard(b)).join('');
+
+    // Re-init animations
+    setTimeout(() => {
+      Animations.initScrollReveal();
+      Animations.initBlurUpImages();
+      Animations.initCardTilt();
+    }, 50);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => BundlesPage.init());
+</script>
+</body>
+</html>

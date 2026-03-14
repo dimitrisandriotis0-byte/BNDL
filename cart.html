@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart — BNDL</title>
+  <meta name="description" content="Review your cart and proceed to checkout.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .cart-page { padding-top: var(--space-32); }
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+    @media (min-width: 768px) {
+      .cart-layout { grid-template-columns: 1fr 380px; }
+    }
+    .cart-item {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-6) 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeInUp 0.4s var(--ease-out) forwards;
+    }
+    .cart-item__image {
+      width: 100px;
+      height: 100px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      background: var(--bg-alt);
+      flex-shrink: 0;
+    }
+    .cart-item__info { flex: 1; }
+    .cart-item__name { font-weight: var(--font-weight-semibold); margin-bottom: var(--space-1); }
+    .cart-item__category { font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: var(--letter-spacing-wide); }
+    .cart-item__price { font-weight: var(--font-weight-bold); font-size: var(--font-lg); margin-top: var(--space-2); }
+    .cart-item__vat { font-size: var(--font-xs); color: var(--text-muted); }
+    .cart-item__actions { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-3); }
+    .cart-item__qty { display: flex; align-items: center; gap: var(--space-2); }
+    .cart-item__qty-btn {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--font-lg);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      background: var(--bg);
+      color: var(--text);
+    }
+    .cart-item__qty-btn:hover { background: var(--bg-alt); }
+    .cart-item__qty-val { font-weight: var(--font-weight-semibold); min-width: 24px; text-align: center; }
+    .cart-item__remove {
+      font-size: var(--font-xs); color: var(--text-muted); cursor: pointer;
+      transition: color var(--duration-fast);
+    }
+    .cart-item__remove:hover { color: var(--error); }
+    .cart-summary {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      position: sticky; top: 120px;
+      height: fit-content;
+    }
+    .cart-summary__title { font-size: var(--font-xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6); }
+    .cart-summary__row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: var(--space-3) 0;
+      font-size: var(--font-sm);
+    }
+    .cart-summary__row--total {
+      border-top: 2px solid var(--border);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      font-size: var(--font-lg);
+      font-weight: var(--font-weight-bold);
+    }
+    .cart-summary__discount {
+      display: flex; gap: var(--space-2); margin-top: var(--space-4);
+    }
+    .cart-summary__discount input {
+      flex: 1;
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-sm);
+      color: var(--text);
+    }
+    .cart-summary__discount-msg {
+      font-size: var(--font-xs);
+      margin-top: var(--space-2);
+    }
+    .cart-summary__discount-msg--success { color: var(--success); }
+    .cart-summary__discount-msg--error { color: var(--error); }
+    .cart-empty {
+      text-align: center;
+      padding: var(--space-20) 0;
+    }
+    .cart-empty__icon { font-size: 64px; margin-bottom: var(--space-6); opacity: 0.3; }
+    .cart-empty__title { font-size: var(--font-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-3); }
+    .cart-empty__desc { color: var(--text-muted); margin-bottom: var(--space-8); }
+  </style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader__text"><span>B</span><span>N</span><span>D</span><span>L</span></div>
+</div>
+
+<section class="cart-page section page-transition">
+  <div class="container">
+    <h1 class="section__title" style="text-align:left;margin-bottom:var(--space-10)" data-i18n="cart.title">Your Cart</h1>
+    <div id="cartContent"><!-- Populated by JS --></div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/language.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+const CartPage = {
+  render() {
+    const container = document.getElementById('cartContent');
+    const items = Cart.getItems();
+    const t = TRANSLATIONS[Language.current];
+
+    if (!items.length) {
+      container.innerHTML = `
+        <div class="cart-empty reveal">
+          <div class="cart-empty__icon">🛒</div>
+          <h2 class="cart-empty__title" data-i18n="cart.empty">${t.cart.empty}</h2>
+          <p class="cart-empty__desc" data-i18n="cart.emptyDesc">${t.cart.emptyDesc}</p>
+          <a href="bundles.html" class="btn btn--primary btn--lg" data-i18n="cart.shopNow">${t.cart.shopNow}</a>
+        </div>
+      `;
+      Animations.initScrollReveal();
+      return;
+    }
+
+    const totals = Cart.getTotal();
+
+    let itemsHtml = items.map(item => {
+      const bundle = BUNDLES.find(b => b.id === item.id);
+      if (!bundle) return '';
+      const name = Language.getBundleName(bundle);
+      const cat = CATEGORIES.find(c => c.id === bundle.category);
+      const catName = cat ? Language.getCategoryName(cat) : '';
+      return `
+        <div class="cart-item" data-id="${item.id}">
+          <img src="${bundle.image}" alt="${name}" class="cart-item__image" loading="lazy">
+          <div class="cart-item__info">
+            <div class="cart-item__category">${catName}</div>
+            <div class="cart-item__name">${name}</div>
+            <div class="cart-item__price">${App.formatPrice(bundle.price)} <span class="cart-item__vat">${t.bundles.vat}</span></div>
+            <div class="cart-item__actions">
+              <div class="cart-item__qty">
+                <button class="cart-item__qty-btn" onclick="CartPage.updateQty('${item.id}', ${item.qty - 1})">−</button>
+                <span class="cart-item__qty-val">${item.qty}</span>
+                <button class="cart-item__qty-btn" onclick="CartPage.updateQty('${item.id}', ${item.qty + 1})">+</button>
+              </div>
+              <button class="cart-item__remove" onclick="CartPage.remove('${item.id}')" data-i18n="cart.remove">${t.cart.remove}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="cart-layout">
+        <div>${itemsHtml}</div>
+        <div class="cart-summary">
+          <h3 class="cart-summary__title">Order Summary</h3>
+          <div class="cart-summary__row">
+            <span data-i18n="cart.subtotal">${t.cart.subtotal}</span>
+            <span>€${totals.subtotal}</span>
+          </div>
+          ${totals.discount > 0 ? `<div class="cart-summary__row" style="color:var(--success)"><span>Discount</span><span>-€${totals.discount}</span></div>` : ''}
+          <div class="cart-summary__row">
+            <span data-i18n="cart.vat">${t.cart.vat}</span>
+            <span>€${totals.vat}</span>
+          </div>
+          <div class="cart-summary__row">
+            <span data-i18n="cart.shipping">${t.cart.shipping}</span>
+            <span style="font-size:var(--font-xs);color:var(--text-muted)" data-i18n="cart.shippingNote">${t.cart.shippingNote}</span>
+          </div>
+          <div class="cart-summary__row cart-summary__row--total">
+            <span data-i18n="cart.total">${t.cart.total}</span>
+            <span>€${totals.total}</span>
+          </div>
+          <div class="cart-summary__discount">
+            <input type="text" id="discountInput" placeholder="${t.cart.discountLabel}">
+            <button class="btn btn--sm btn--secondary" onclick="CartPage.applyDiscount()">${t.cart.apply}</button>
+          </div>
+          <div class="cart-summary__discount-msg" id="discountMsg"></div>
+          <a href="checkout.html" class="btn btn--primary" style="width:100%;margin-top:var(--space-6)" data-i18n="cart.checkout">${t.cart.checkout}</a>
+        </div>
+      </div>
+    `;
+  },
+
+  updateQty(id, qty) {
+    Cart.updateQty(id, qty);
+    this.render();
+  },
+
+  remove(id) {
+    Cart.removeItem(id);
+    this.render();
+  },
+
+  applyDiscount() {
+    const code = document.getElementById('discountInput').value;
+    const msg = document.getElementById('discountMsg');
+    const t = TRANSLATIONS[Language.current];
+    if (Cart.applyDiscount(code)) {
+      msg.textContent = t.cart.discountApplied;
+      msg.className = 'cart-summary__discount-msg cart-summary__discount-msg--success';
+      this.render();
+    } else {
+      msg.textContent = t.cart.invalidCode;
+      msg.className = 'cart-summary__discount-msg cart-summary__discount-msg--error';
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => CartPage.render());
+</script>
+</body>
+</html>
