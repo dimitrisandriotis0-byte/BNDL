@@ -19,6 +19,22 @@
 
   <!-- Page-specific styles -->
   <style>
+    /* Force light mode */
+    :root {
+      color-scheme: light only;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      html, body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      * {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
+    
     /* Hide page content while preloader is active */
     body.preloader-active > *:not(.preloader) {
       opacity: 0;
