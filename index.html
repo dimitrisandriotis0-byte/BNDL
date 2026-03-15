@@ -89,6 +89,12 @@
         font-weight: 800 !important; 
       }
       
+      /* Hide hero when mobile menu opens */
+      body.menu-open .hero,
+      body.menu-open #hero {
+        visibility: hidden !important;
+      }
+      
       /* Reveal animations - disable on mobile */
       .reveal, [class*="reveal"] {
         opacity: 1 !important;

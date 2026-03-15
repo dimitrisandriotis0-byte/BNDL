@@ -95,6 +95,7 @@ const App = {
     const toggle = document.querySelector('.nav__menu-toggle');
     menu.classList.toggle('active');
     toggle.classList.toggle('active');
+    document.body.classList.toggle('menu-open');
     document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
   },
 
