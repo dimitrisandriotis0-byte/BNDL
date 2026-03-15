@@ -171,6 +171,27 @@ document.addEventListener('DOMContentLoaded', () => {
   showSkeletonCards();
   fetchRSSFeed();
 });
+
+<!-- Preloader Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Add preloader-active class to body
+  document.body.classList.add('preloader-active');
+  
+  // Hide preloader after 1.5s and show page content
+  setTimeout(() => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+      preloader.classList.add('hidden');
+    }
+    
+    // Remove preloader-active class to show page content
+    setTimeout(() => {
+      document.body.classList.remove('preloader-active');
+    }, 500); // Wait for fade-out animation
+  }, 1500);
+});
+</script>
 </script>
 </body>
 </html>
