@@ -124,6 +124,19 @@
         color: #000000 !important;
         font-weight: 800 !important;
       }
+      
+      /* Dark section text contrast mobile fix */
+      .newsletter, [class*="newsletter"], [class*="subscribe"],
+      .cta-section, [class*="cta"] {
+        background-color: #000000 !important;
+      }
+      .newsletter h2, .newsletter p, .newsletter span,
+      [class*="newsletter"] h2, [class*="newsletter"] p,
+      [class*="subscribe"] h2, [class*="subscribe"] p,
+      .cta-section h2, .cta-section p {
+        color: #ffffff !important;
+        opacity: 1 !important;
+      }
     }
     @keyframes heroTextIn {
       to { opacity: 1; transform: translateY(0); }
