@@ -886,6 +886,7 @@
       // Custom How It Works Animations
       const initHowItWorksAnimations = () => {
         const container = document.getElementById('stepsContainer');
+        if (!container) return;
         const line = container.querySelector('.steps__line-fill');
         const steps = container.querySelectorAll('.step');
         if (!container || !line) return;
